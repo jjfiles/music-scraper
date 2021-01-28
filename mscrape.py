@@ -84,36 +84,39 @@ def dl():
         }
     )
     with ydl:
-        #get playlist metadata and determine number of entries
-        meta = ydl.extract_info(link, download=False)
-        entries = len(meta['entries'])
-        
         #check if archive file has already been made. if not, create one
         if not os.path.exists('archive.txt'):
             f = open('archive.txt', 'x')
             f.close()
-        
-        #read through the archive file to see if any entries have already been downloaded
-        with open('archive.txt') as f:
-            for video in meta['entries']:
-                if not video:
-                    print("ERROR: Unable to retreive info. Continuing...")
-                    continue
-                
-                #if so decrement the number of entries being downloaded
-                if video['id'] in f.read():
-                    entries -= 1
-        
+            
+        #get playlist metadata and determine number of entries
+        meta = ydl.extract_info(link, download=False)
+      
         global inc
-        
         #if the link is not a playlist set the increment percentage to 100 / the number of entries
         try:
+            entries = len(meta['entries'])
             if entries != 0:
                 inc = 100 / entries
         
+            #read through the archive file to see if any entries have already been downloaded
+            with open('archive.txt') as f:
+                for video in meta['entries']:
+                    if not video:
+                        print("ERROR: Unable to retreive info. Continuing...")
+                        continue
+                    
+                    #if so decrement the number of entries being downloaded
+                    if video['id'] in f.read():
+                        entries -= 1
+                        
         #otherwise just increment the entire 100%
         except KeyError:
             inc = 100
+            entries = 1
+        
+        
+        
         
         #begin download and force tkinter update after/
         ydl.download([link])
