@@ -5,9 +5,6 @@ from tkinter.ttk import Progressbar
 import configparser
 import youtube_dl
 
-# TODO:
-#   - save selected path
-
 #defaults
 PATH = os.getcwd()
 link = ""
